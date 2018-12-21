@@ -1,0 +1,18 @@
+{
+    "roomName": "",
+    "roomId": 2,
+    "limitTemperature": 30,
+    "minEplased": 15,
+    "email": "giovanni.mugelli@simeyoung.it",
+    "password": "simeyoung@2017",
+    "emailTo": "marco.acquaioli@simetlc.com",
+    "cc": ["giovanni.mugelli@simeyoung.it", "marco.acquaioli@gmail.com"],
+    "firebase": {
+        "apiKey": "AIzaSyCiiSkIACWIk0Fmx8TKj6xrrGmX-DPdatc",
+        "authDomain": "temperatura-sala-server.firebaseapp.com",
+        "databaseURL": "https://temperatura-sala-server.firebaseio.com",
+        "projectId": "temperatura-sala-server",
+        "storageBucket": "temperatura-sala-server.appspot.com",
+        "messagingSenderId": "215778224206"
+    }
+}

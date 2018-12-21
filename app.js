@@ -1,34 +1,36 @@
 const nodemailer = require('nodemailer');
 const rpiDhtSensor = require('rpi-dht-sensor');
 const firebase = require("firebase");
+const fs = require('fs');
 
 // impostazioni applicazione
-const config = {
-    apiKey: "AIzaSyCiiSkIACWIk0Fmx8TKj6xrrGmX-DPdatc",
-    authDomain: "temperatura-sala-server.firebaseapp.com",
-    databaseURL: "https://temperatura-sala-server.firebaseio.com",
-    projectId: "temperatura-sala-server",
-    storageBucket: "temperatura-sala-server.appspot.com",
-    messagingSenderId: "215778224206"
-};
-
-const roomName = "Sala Server SIME";
-const roomId = 2; // imposta numero stanza
-const limitTemperature = 30; // imposta temperatura limite prima di inviare l'email
-const minEplased = 15; // imposta numero di minuti di lettura sensore
-
-const email = "giovanni.mugelli@simeyoung.it";
-const password = "simeyoung@2017";
-const emailTo = "marco.acquaioli@simetlc.com";
-const cc = ['giovanni.mugelli@simeyoung.it', 'marco.acquaioli@gmail.com'];
-
+// impostazioni default
+let config = {
+    roomName: "",
+    roomId = 2, // imposta numero stanza
+    limitTemperature: 30, // imposta temperatura limite prima di inviare l'email
+    minEplased: 15, // imposta numero di minuti di lettura sensore
+    email: "giovanni.mugelli@simeyoung.it",
+    password: "simeyoung@2017",
+    emailTo: "marco.acquaioli@simetlc.com",
+    cc: ['giovanni.mugelli@simeyoung.it', 'marco.acquaioli@gmail.com'],
+    firebase: {
+        apiKey: "AIzaSyCiiSkIACWIk0Fmx8TKj6xrrGmX-DPdatc",
+        authDomain: "temperatura-sala-server.firebaseapp.com",
+        databaseURL: "https://temperatura-sala-server.firebaseio.com",
+        projectId: "temperatura-sala-server",
+        storageBucket: "temperatura-sala-server.appspot.com",
+        messagingSenderId: "215778224206"
+    }
+}
+// carica impostazioni da json
+config = JSON.parse(fs.readFileSync('config.json'));
 
 // inizializza firebase
-firebase.initializeApp(config);
+firebase.initializeApp(config.firebase);
 
 // definisce gpio del sensore
 const dht = new rpiDhtSensor.DHT22(4);
-
 
 function sendEmail() {
     const transport = nodemailer.createTransport({
@@ -40,17 +42,17 @@ function sendEmail() {
             rejectUnauthorized: false
         },
         auth: {
-            user: email,
-            pass: password
+            user: config.email,
+            pass: config.password
         }
     });
     // Building Email message.
     const mailOptions = {
         from: '"Bot Detecting" <noreplay@simeyoung.it>',
-        to: emailTo,
-        cc: cc,
+        to: config.emailTo,
+        cc: config.cc,
         subject: '@functions rilevata temperatura alta',
-        text: 'Temperatura elevata ' + roomName
+        text: 'Temperatura elevata ' + config.roomName
     };
 
     // send mail with defined transport object
@@ -84,10 +86,10 @@ function startRead() {
     console.log('Temperature: ' + readout.temperature.toFixed(2) + 'C, ' +
         'humidity: ' + readout.humidity.toFixed(2) + '%');
 
-    writeTemperature(roomId, readout.temperature.toFixed(2), readout.humidity.toFixed(2));
-    setTimeout(startRead, 1000 * 60 * minEplased); // l'ltimo numero indica i minuti di update
+    writeTemperature(config.roomId, readout.temperature.toFixed(2), readout.humidity.toFixed(2));
+    setTimeout(startRead, 1000 * 60 * config.minEplased); // l'ltimo numero indica i minuti di update
 
-    if (readout.temperature < limitTemperature) return; // Soglia di temperatura
+    if (readout.temperature < config.limitTemperature) return; // Soglia di temperatura
 
     // invia email di avviso soglia
     // di temperatura superato 

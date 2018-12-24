@@ -7,7 +7,7 @@ const fs = require('fs');
 // impostazioni default
 let config = {
     roomName: "",
-    roomId = 2, // imposta numero stanza
+    roomId: 2, // imposta numero stanza
     limitTemperature: 30, // imposta temperatura limite prima di inviare l'email
     minEplased: 15, // imposta numero di minuti di lettura sensore
     email: "giovanni.mugelli@simeyoung.it",
